@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import io from 'socket.io-client';
 import { addMessage, fetchChatHistory } from '../../redux/slices/chatSlice';
-import './ChatWidget.css'; // Assuming you might want some styles
+import { SOCKET_URL } from '../../utils/apiConfig';
+import API_URL from '../../utils/apiConfig';
 
 const ChatWidget = () => {
     const dispatch = useDispatch();
@@ -10,26 +11,59 @@ const ChatWidget = () => {
     const { messages } = useSelector((state) => state.chatState);
     const [isOpen, setIsOpen] = useState(false);
     const [messageInput, setMessageInput] = useState('');
+    const [adminId, setAdminId] = useState(null);
     const socketRef = useRef();
     const messagesEndRef = useRef(null);
+    const typingTimeoutRef = useRef(null);
+    const [isTyping, setIsTyping] = useState(false);
+    const [loading, setLoading] = useState(false);
 
+    // Fetch Real Admin ID on mount
     useEffect(() => {
         if (user && token) {
-            socketRef.current = io(import.meta.env.VITE_BASE_URL);
+            const getAdmin = async () => {
+                try {
+                    const res = await fetch(`${API_URL}/users/admin-id`, {
+                         headers: { Authorization: `Bearer ${token}` }
+                    });
+                    const data = await res.json();
+                    if (data.status === 'success') {
+                        setAdminId(data.data);
+                    }
+                } catch (err) {
+                    console.error("Failed to get admin ID", err);
+                }
+            };
+            getAdmin();
+        }
+    }, [user, token]);
 
+    useEffect(() => {
+        if (user && token && adminId) {
+            socketRef.current = io(SOCKET_URL);
             socketRef.current.emit('join', user._id);
 
             socketRef.current.on('receiveMessage', (message) => {
                 dispatch(addMessage(message));
+                setIsTyping(false); // Stop typing if message received
             });
 
-            dispatch(fetchChatHistory(user._id));
+            socketRef.current.on('typing', (senderId) => {
+                 if (senderId === adminId) setIsTyping(true);
+            });
+
+            socketRef.current.on('stopTyping', (senderId) => {
+                 if (senderId === adminId) setIsTyping(false);
+            });
+            
+            // Pass adminId to fetch history between USER and ADMIN
+            dispatch(fetchChatHistory(adminId));
 
             return () => {
                 socketRef.current.disconnect();
             };
         }
-    }, [user, token, dispatch]);
+    }, [user, token, adminId, dispatch]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -37,94 +71,133 @@ const ChatWidget = () => {
 
     const handleSendMessage = (e) => {
         e.preventDefault();
-        if (!messageInput.trim() || !socketRef.current) return;
+        if (!messageInput.trim() || !socketRef.current || !adminId) return;
 
         const messageData = {
             sender: user._id,
-            receiver: 'admin', // You might need a specific admin ID or handle this on backend
+            receiver: adminId, 
             message: messageInput,
         };
 
-        // For now, assuming we send to a generic 'admin' or handling it via backend logic
-        // But since our backend expects a receiver ID, we need to know the admin's ID.
-        // For this simple implementation, let's assume the user sends to a specific admin or we broadcast to admins.
-        // A better approach for "User to Admin" is to have the backend handle "receiver: admin" and look up an admin.
-        // OR, we can just emit a 'sendMessageToAdmin' event.
-        // Let's stick to the plan: The user needs to know who they are talking to? 
-        // Actually, usually support chat assigns an admin.
-        // Let's temporarily hardcode an admin ID or fetch it? 
-        // For simplicity, let's assume the backend handles routing if receiver is 'admin' (need to update backend?)
-        // OR, let's just pick the first admin found?
-        // Let's update backend to handle "receiver: 'admin'"? No, let's keep it simple.
-        // Let's assume there's a "Support" user.
-        
-        // WAIT: The user request said "chat app between the user and admin".
-        // Let's assume the user sends to the *system* and any admin can see it.
-        // But my schema requires a receiver ID.
-        // I will update the frontend to send to a placeholder ID or handle it.
-        
-        // Let's emit to the socket, and let the backend find an admin?
-        // My backend `sendMessage` expects `receiver` in the data.
-        
-        // Let's modify the backend to handle this later if needed. For now, I will assume there is an admin.
-        // I'll just emit the message and let the socket server handle it?
-        // The socket server saves to DB using the `receiver` ID.
-        
-        // Workaround: I will fetch the admin ID first? No.
-        // I will make the receiver optional in the schema? No.
-        
-        // Let's just use a hardcoded Admin ID for testing if I can find one, or better:
-        // When the user opens the chat, we could assign an admin?
-        
-        // Let's go with: The user emits 'sendMessage', and if they are a user, the receiver is the Admin.
-        // I need to know the Admin's ID.
-        // I'll add a temporary fix: I'll fetch the admin ID in the `useEffect`.
-        // But I don't have an API for that.
-        
-        // Alternative: The user just sends messages to "Support".
-        // I'll update the backend `sendMessage` to handle `receiver: 'admin'` -> find an admin user.
-        
-        socketRef.current.emit('sendMessage', { ...messageData, receiver: '64c7...' }); // Placeholder
-        
-        // Actually, let's just emit and let the backend handle it?
-        // My backend code: `const { sender, receiver, message } = data;`
-        
-        // I will update the backend `sendMessage` listener to find an admin if receiver is not provided or is 'admin'.
-        
         socketRef.current.emit('sendMessage', messageData);
-        // Optimistically add message
-        // dispatch(addMessage({ ...messageData, _id: Date.now(), createdAt: new Date().toISOString() })); 
+        // Optimistically add
+        dispatch(addMessage({ ...messageData, _id: Date.now().toString(), createdAt: new Date().toISOString() })); 
         setMessageInput('');
     };
 
-    if (!user || user.role === 'admin') return null; // Admins have their own view
+    if (!user || user.role === 'admin') return null;
 
     return (
-        <div className={`chat-widget ${isOpen ? 'open' : ''}`}>
-            <button className="chat-toggle" onClick={() => setIsOpen(!isOpen)}>
-                <i className={`fas ${isOpen ? 'fa-times' : 'fa-comment'}`}></i>
-            </button>
+        <div className="fixed bottom-6 right-6 z-[9999]">
+            {/* Chat Toggle Button */}
+            {!isOpen && (
+                <button 
+                    className="w-16 h-16 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 bg-gradient-to-r from-noon-yellow to-yellow-500 hover:scale-110 animate-bounce-subtle"
+                    onClick={() => setIsOpen(true)}
+                >
+                    <i className="fas fa-comment-dots text-black text-2xl"></i>
+                </button>
+            )}
+
+            {/* Chat Window */}
             {isOpen && (
-                <div className="chat-window">
-                    <div className="chat-header">
-                        <h3>Support Chat</h3>
-                    </div>
-                    <div className="chat-messages">
-                        {messages.map((msg, index) => (
-                            <div key={index} className={`message ${msg.sender === user._id ? 'sent' : 'received'}`}>
-                                <p>{msg.message}</p>
+                <div className="absolute bottom-0 right-0 w-96 bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-gray-100 animate-fade-in-up h-[600px]">
+                    {/* Header */}
+                    <div className="bg-gradient-to-r from-gray-900 to-black p-4 flex items-center justify-between shadow-md">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm relative">
+                                <i className="fas fa-headset text-noon-yellow text-lg"></i>
+                                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-gray-900 rounded-full"></span>
                             </div>
-                        ))}
+                            <div>
+                                <h3 className="font-bold text-white text-md">Noon Support</h3>
+                                <p className="text-xs text-gray-300">We typically reply in minutes</p>
+                            </div>
+                        </div>
+                        <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white transition-colors">
+                            <i className="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+
+                    {/* Messages Area */}
+                    <div className="flex-1 p-4 overflow-y-auto bg-[#e5ddd5] space-y-3" style={{ backgroundImage: "url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')" }}>
+                        {/* Welcome Message */}
+                        <div className="flex justify-start">
+                            <div className="bg-white text-gray-800 px-4 py-2 rounded-lg rounded-tl-none shadow-sm max-w-[80%] text-sm relative">
+                                <p>👋 Hello {user.name.split(' ')[0]}! How can we help you today?</p>
+                                <span className="text-[10px] text-gray-400 block text-right mt-1">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                            </div>
+                        </div>
+
+                        {messages.map((msg, index) => {
+                            const isMe = msg.sender === user._id;
+                            return (
+                                <div key={index} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
+                                    <div className={`px-4 py-2 rounded-lg shadow-sm max-w-[80%] text-sm relative ${
+                                        isMe 
+                                            ? 'bg-[#d9fdd3] text-gray-800 rounded-tr-none' 
+                                            : 'bg-white text-gray-800 rounded-tl-none'
+                                    }`}>
+                                        <p>{msg.message}</p>
+                                        <span className={`text-[10px] block text-right mt-1 ${isMe ? 'text-green-800/60' : 'text-gray-400'}`}>
+                                            {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            {isMe && <i className="fas fa-check-double ml-1 text-blue-500"></i>}
+                                        </span>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                        {/* Typing Bubble */}
+                        {isTyping && (
+                            <div className="flex justify-start">
+                                <div className="bg-white px-4 py-3 rounded-lg rounded-tl-none shadow-sm flex items-center gap-1">
+                                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
+                                </div>
+                            </div>
+                        )}
                         <div ref={messagesEndRef} />
                     </div>
-                    <form className="chat-input" onSubmit={handleSendMessage}>
+
+                    {/* Input Area */}
+                    <form className="p-3 bg-gray-100 flex gap-2 items-center" onSubmit={handleSendMessage}>
+                        <button type="button" className="text-gray-500 hover:text-gray-700 p-2">
+                             <i className="fas fa-paperclip"></i>
+                        </button>
                         <input
                             type="text"
                             value={messageInput}
-                            onChange={(e) => setMessageInput(e.target.value)}
+                            onChange={(e) => {
+                                setMessageInput(e.target.value);
+                                if (!socketRef.current || !adminId) return;
+
+                                if (!typingTimeoutRef.current) {
+                                    socketRef.current.emit('typing', { sender: user._id, receiver: adminId });
+                                }
+                                
+                                if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+
+                                typingTimeoutRef.current = setTimeout(() => {
+                                    socketRef.current.emit('stopTyping', { sender: user._id, receiver: adminId });
+                                    typingTimeoutRef.current = null;
+                                }, 2000);
+                            }}
                             placeholder="Type a message..."
+                            className="flex-1 bg-white border-none rounded-full px-4 py-2.5 text-sm focus:ring-0 shadow-sm"
                         />
-                        <button type="submit"><i className="fas fa-paper-plane"></i></button>
+                        {messageInput.trim() ? (
+                            <button 
+                                type="submit" 
+                                className="w-10 h-10 bg-noon-yellow text-black rounded-full flex items-center justify-center hover:bg-yellow-400 transition-all shadow-md transform hover:scale-105"
+                            >
+                                <i className="fas fa-paper-plane text-sm"></i>
+                            </button>
+                        ) : (
+                             <button type="button" className="text-gray-500 hover:text-gray-700 p-2">
+                                <i className="fas fa-microphone"></i>
+                            </button>
+                        )}
                     </form>
                 </div>
             )}

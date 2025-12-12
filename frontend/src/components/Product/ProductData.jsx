@@ -1,32 +1,47 @@
 import React from 'react';
-import styles from "./Product.module.css";
 import Select from '@mui/material/Select';
 import { MenuItem } from '@mui/material';
 import { useState } from 'react';
 import Image from './Image';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../redux/slices/cartSlice';
+import { toast } from 'react-toastify';
 
 const ProductData = ({ product }) => {
     const [quantity, setQuantity] = useState(1);
+    const dispatch = useDispatch();
+
+    const handleAddToCart = () => {
+        dispatch(addToCart({ 
+            productId: product.id, 
+            color: product.colors?.[0] || 'Default', 
+            quantity: Number(quantity) 
+        }))
+        .unwrap()
+        .then(() => toast.success('Product added to cart'))
+        .catch((err) => toast.error(err));
+    };
 
     const renderOldPrice = () => {
-        return <div className={styles.old_price}>
-                    <span>Was :</span>
-                    <span>{product.old_price}</span>
+        return <div className="flex items-center gap-2 text-sm text-noon-gray-500 mb-1">
+                    <span>Was:</span>
+                    <span className="line-through font-medium">EGP {product.old_price.toFixed(2)}</span>
                 </div>
     }
 
     const renderNewPrice = () => {
-        return <div className={styles.new_price}>
-                    <span>Now :</span>
-                    <span><strong>EGP  {product.new_price.toFixed(2)}</strong> Inclusive of VAT</span>
+        return <div className="flex items-center gap-2 text-xl mb-2">
+                    <span className="text-noon-gray-500 text-sm">Now:</span>
+                    <span className="font-bold text-noon-black">EGP {product.new_price.toFixed(2)}</span>
+                    <span className="text-xs text-noon-gray-500">Inclusive of VAT</span>
                 </div>
     }
 
     const renderSaving = () => {
-        return <div className={styles.saving}>
-                    <span>Saving :</span>
+        return <div className="flex items-center gap-2 text-sm font-bold text-noon-green mb-4">
+                    <span>Saving:</span>
                     <span>EGP {(product.old_price - product.new_price).toFixed(2)}</span>
-                    <div className={styles.sale_container}>
+                    <div className="bg-noon-green/10 px-2 py-0.5 rounded text-xs">
                         {Math.floor(100 - (product.new_price / product.old_price) * 100)}% OFF
                     </div>
                 </div>
@@ -39,15 +54,15 @@ const ProductData = ({ product }) => {
         const dayNumber = date.getDate();
         const dayString = date.toLocaleString('default', { weekday: 'short' });
         
-        return <div className={styles.delivery_container}>
-                    <p>
-                        <strong>Free delivery </strong>
+        return <div className="bg-noon-gray-50 p-3 rounded-lg mb-6 border border-noon-gray-200">
+                    <p className="text-sm text-noon-black mb-2">
+                        <strong className="text-noon-blue">Free delivery </strong>
                         by
                         <strong> {dayString} </strong>
                         ,
                         <strong> {month} {dayNumber} </strong>
                     </p>
-                    <div className={styles.express}>
+                    <div className="w-24">
                         <Image imgSrc={"/data/assets/svg/fulfilment_express_v2-en.svg"} />
                     </div>
                 </div>
@@ -58,31 +73,61 @@ const ProductData = ({ product }) => {
     }
 
     return (
-        <div className={styles.all_data_container}>
-            <h4>{product.brand_name}</h4>
-            <h3>{product.title}</h3>
-            <div className={product.model_number ? styles.model_container : styles.without_modal}>
-                <p>{product.model_number}</p>
-                { product.rating ? <div className={styles.rating_container}>{product.rating}<i className="fa-solid fa-star fa-sm"></i></div> : "" }
-                <p className={styles.reviews}>{product.ratingCount}</p>
+        <div className="flex flex-col h-full">
+            <h4 className="text-sm text-noon-gray-500 font-bold mb-1 uppercase tracking-wide">{product.brand_name}</h4>
+            <h3 className="text-xl text-noon-black font-heading font-medium mb-2 leading-snug">{product.title}</h3>
+            <div className="flex items-center gap-4 mb-4">
+                <p className="text-xs text-noon-gray-500">Model: {product.model_number || 'N/A'}</p>
+                { product.rating ? (
+                    <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 bg-noon-green text-white text-xs px-2 py-0.5 rounded-full font-bold">
+                            {product.rating} <i className="fa-solid fa-star text-[10px]"></i>
+                        </div>
+                        <p className="text-xs text-noon-gray-500 underline cursor-pointer">{product.ratingCount} Ratings</p>
+                    </div>
+                ) : "" }
             </div>
-            { product.old_price ? renderOldPrice() : "" }
-            { product.new_price ? renderNewPrice() : "" }
-            { product.old_price ? renderSaving() : "" }
-            { renderDeliveryDate() }
-            <div className={styles.add_to_cart_container}>
-                <Select
-                    sx={{ width: "20%", height: "100%", fontFamily: "inherit", outline: "none", border: "none" }}
-                    labelId="demo-simple-select-label"
-                    value={quantity}
-                    onChange={handleSelectChange}
-                >
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={2}>2</MenuItem>
-                    <MenuItem value={3}>3</MenuItem>
-                </Select>
+            
+            <div className="border-t border-b border-gray-100 py-4 mb-4">
+                { product.old_price ? renderOldPrice() : "" }
+                { product.new_price ? renderNewPrice() : "" }
+                { product.old_price ? renderSaving() : "" }
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                     <h5 className="text-sm font-bold text-noon-black mb-1">Description</h5>
+                     <p className="text-sm text-noon-gray-500 leading-relaxed">{product.description}</p>
+                </div>
+            </div>
 
-                <button>Add To cart</button>
+            { renderDeliveryDate() }
+
+            <div className="flex gap-4 mt-auto">
+                <div className="w-24">
+                    <Select
+                        sx={{ 
+                            width: "100%", 
+                            height: "44px", 
+                            fontFamily: "inherit",
+                            backgroundColor: "white",
+                            borderRadius: "8px",
+                            "& .MuiOutlinedInput-notchedOutline": { borderColor: "#e2e8f0" },
+                            "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#cbd5e1" },
+                            "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#3866df" }
+                        }}
+                        value={quantity}
+                        onChange={handleSelectChange}
+                    >
+                        {[...Array(10)].map((_, i) => (
+                            <MenuItem key={i + 1} value={i + 1}>{i + 1}</MenuItem>
+                        ))}
+                    </Select>
+                </div>
+
+                <button 
+                    onClick={handleAddToCart}
+                    className="flex-1 bg-noon-blue text-white font-bold py-2.5 rounded-lg hover:bg-blue-700 transition-colors shadow-soft hover:shadow-hover"
+                >
+                    Add To Cart
+                </button>
             </div>
         </div>
     );

@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import API_URL from '../../utils/apiConfig';
 
 const initialState = {
   cartItems: [],
@@ -13,7 +14,7 @@ export const fetchCart = createAsyncThunk(
   async (_, { rejectWithValue, getState }) => {
     try {
       const { token } = getState().authState;
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/carts`, {
+      const response = await fetch(`${API_URL}/carts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
@@ -27,16 +28,16 @@ export const fetchCart = createAsyncThunk(
 
 export const addToCart = createAsyncThunk(
   'cart/addToCart',
-  async ({ productId, color }, { rejectWithValue, getState }) => {
+  async ({ productId, color, quantity }, { rejectWithValue, getState }) => {
     try {
       const { token } = getState().authState;
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/carts`, {
+      const response = await fetch(`${API_URL}/carts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ productId, color }),
+        body: JSON.stringify({ productId, color, quantity }),
       });
       const data = await response.json();
       if (!response.ok) return rejectWithValue(data.message);
@@ -52,7 +53,7 @@ export const removeFromCart = createAsyncThunk(
   async (itemId, { rejectWithValue, getState }) => {
     try {
       const { token } = getState().authState;
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/carts/${itemId}`, {
+      const response = await fetch(`${API_URL}/carts/${itemId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });

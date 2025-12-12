@@ -7,21 +7,17 @@ import { getSlider } from '../../apis/sliders';
 import ImageSlider from '../Collection/ImageSlider';
 // import Footer from '../Footer/Footer';
 import Spinner from '../Spinner/Spinner';
-import styles from "./Category.module.css";
+
 
 const Category = () => {
 
     const ProductsOverview = lazy(async () =>  {
         return new Promise(resolve => setTimeout(resolve, 1000)).then(
-          () => import("../Collection/ProductsOverview")
+          () => import("../Product/ProductsOverview")
         );
     });
 
-    const Footer = lazy(async () =>  {
-        return new Promise(resolve => setTimeout(resolve, 2000)).then(
-          () => import("../Footer/Footer")
-        );
-    });
+
 
     const params = useParams();
     const dispatch = useDispatch();
@@ -33,20 +29,23 @@ const Category = () => {
       }
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         document.title = `${params.categoryTitle.charAt(0).toUpperCase()}${params.categoryTitle.slice(1)} | Online Shopping`;
         getSlider(dispatch, params.categoryTitle === "home" ? "home-kitchen" : params.categoryTitle);
         getCategoryProducts(dispatch, params.categoryTitle);
     }, [params, dispatch]);
 
     return (
-        <div className={styles.main_container}>
+        <div className="bg-noon-gray-100 min-h-screen pb-12">
             <Suspense fallback={<Spinner />}>
-                <ImageSlider slider={slider} />    
-                {renderProductsOverviews()} 
+                <div className="max-w-[1440px] mx-auto">
+                    <ImageSlider slider={slider} />    
+                    <div className="px-4 lg:px-8 space-y-6">
+                        {renderProductsOverviews()} 
+                    </div>
+                </div>
             </Suspense>
-            <Suspense fallback={''}>
-                <Footer />
-            </Suspense>
+
         </div>
     );
 }

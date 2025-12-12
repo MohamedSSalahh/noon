@@ -1,84 +1,184 @@
-/* ...fonts... */
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
-/* ...fonts... */
-
-/* ...global... */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  /* ...main-colors... */
-  --black: #000000;
-  --white: #ffffff;
-  --yellow: #feee00; /* Noon Yellow */
-  --blue: #3866df;
-  --green: #38ae04;
-  --red: #de0b0b;
-  --orange: #f5a523;
-  --light-gray: #7e859b; /* Updated gray */
-  --dark-gray: #404553;
-  
-  /* ...bg-colors... */
-  --overlay: rgba(0, 0, 0, 0.5);
-  --bg01: #fff9f4;
-  --bg02: #fcfbf4;
-  --bg03: #f7f7fa; /* Light grey background common in noon */
-  --bg04: #fcf8e0;
-  
-  /* ...other variables... */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --ar-font: 'Cairo', sans-serif;
-  --en-font: 'Proxima Nova', 'Helvetica Neue', Arial, sans-serif; /* Noon uses Proxima Nova or similar clean sans */
-  --shadow01: 0 2px 4px 0 rgba(0,0,0,.05);
-  --shadow02: 0 4px 8px 0 rgba(0,0,0,.1);
-}
-
-html {
-  height: 100%;
-  font-size: 16px;
+    --toast-icon-margin-start: -3px;
+    --toast-icon-margin-end: 4px;
+    --toast-svg-margin-start: -1px;
+    --toast-svg-margin-end: 0px;
+    --toast-button-margin-start: auto;
+    --toast-button-margin-end: 0;
+    --toast-close-button-start: 0;
+    --toast-close-button-end: unset;
+    --toast-close-button-transform: translate(-35%, -35%);
+    --color-noon-yellow: #feee00;
+    --color-noon-yellow-muted: #c7ba00;
+    --color-noon-yellow-light: #fffccf;
+    --color-noon-blue: #3866df;
+    --color-noon-blue2: #3466ea;
+    --color-noon-blue-darker: #e8edfb;
+    --color-noon-blue-light: #edf2ff;
+    --color-noon-blue-lighter: #3e72f7;
+    --color-noon-blue-lightest: #e8edfb;
+    --color-light-blue1: #eff7ff;
+    --color-noon-black: #404553;
+    --color-noon-black2: rgba(64,69,83,.8);
+    --color-noon-black3: #262a33;
+    --color-white: #fff;
+    --color-white2: #f4f7fa;
+    --color-whitesmoke: #f5f5f5;
+    --color-black: #000;
+    --color-black-primary: #0e0e0e;
+    --color-black-secondary: #212121;
+    --color-grey1: #7e859b;
+    --color-grey2: #9ba0b1;
+    --color-grey3: #dadce3;
+    --color-grey4: #f3f4f8;
+    --color-grey5: #4b4b4b;
+    --color-grey6: #eceef4;
+    --color-grey7: #f7f7f7;
+    --color-grey8: #f2f2f2;
+    --color-grey9: #1d2539;
+    --color-grey10: #666d85;
+    --color-grey11: #f2f3f7;
+    --color-grey12: #fcfcfd;
+    --color-grey13: #5d5d5d;
+    --color-grey14: #d2d6de;
+    --color-grey800: #252834;
+    --color-grey-img-border: #eaecf2;
+    --color-grey-borders: #e5e5e5;
+    --color-grey-separator: #edeef2;
+    --color-grey-light: #667085;
+    --color-grey-dark: #4a4a4a;
+    --color-manatee: #8d94a7;
+    --color-system-green: #38ae04;
+    --color-dark-green: #008200;
+    --color-dark-green2: #0a4f4a;
+    --color-loyalty-green: #2f7c0d;
+    --color-system-green-tint: #dff1da;
+    --color-system-green-tint-light: rgba(56,174,4,.05);
+    --color-system-orange: #f3ac30;
+    --color-system-orange-tint: #fff8ec;
+    --color-system-yellow-tint: #fcfbf5;
+    --color-system-red: #fa0000;
+    --color-system-red-alt: #ea2b2b;
+    --color-system-red-pure: red;
+    --color-system-warning: #ce0f0f;
+    --color-system-red-tint: #fdecec;
+    --color-system-red-tint-light: #f7f7f7;
+    --color-system-blue-tint: #eff3fd;
+    --color-scrim: rgba(0,0,0,.4);
+    --color-control-disabled: #cbcfd7;
+    --color-control-disabled-bg: #f0f1f4;
+    --color-cta-disabled-bg: #f0f0f2;
+    --color-cta-disabled-body: #b2bbd2;
+    --color-charcoal-blue: #343d54;
+    --color-vip-black: #1c1c1b;
+    --color-vip-disable: #eceef4;
+    --color-bg-tertiary: #f7f7fa;
+    --color-bg-support: #fcfbf4;
+    --color-bg-support-alt: #f7f9fe;
+    --color-bg-support-light: #f1f4fd;
+    --color-bg-modal: #f6f7f9;
+    --color-light-cream: #f4fcee;
+    --color-green: #2daf32;
+    --color-green2: #f5fbf2;
+    --color-green3: #eaf0e6;
+    --color-body-light: #e2e5f1;
+    --color-body-muted: #b2bbd2;
+    --color-border: #f1f3f9;
+    --color-border-light: #ebecf0;
+    --color-border-light-shadow: #f1f1f1;
+    --color-border-blue-haze: #c6ccdd;
+    --color-border-blue-light: #f0f2f7;
+    --color-rocket-yellow: #f3e00a;
+    --color-border-rocket-yellow: #f1de0a;
+    --color-font-light: #b2b8ca;
+    --color-off-white: #fcfbf5;
+    --color-supermall-bg: #2122b8;
+    --color-minutes-bg: #cf2b2c;
+    --color-general-positive: #e4f7db;
+    --color-font-shadow-blue: #7c87a8;
+    --color-bg-approve-light: #eff9ec;
+    --color-enbd-black: #1b1a1c;
+    --color-enbd-green: #c2f770;
+    --color-bluebonnet: #241afc;
+    --color-purple-deep: #201549;
+    --color-american-blue: #454373;
+    --color-blue-bell: #9b98db;
+    --color-blue-bell-muted: rgba(36,26,252,.06);
+    --color-light-orange: #ca8b58;
+    --color-purple: #b22eff;
+    --color-blue: #0062ff;
+    --color-blue-narwhal: #1453a3;
+    --color-blue-tint-lightest: #f5f8fd;
+    --color-blue-tint-ultra-light: #eff7ff;
+    --color-dark-gold: #b8860b;
+    --gradient-noon-ai: linear-gradient(105.42deg,#005dfe 19.69%,#a100fe 61.26%,#ff0ee7 102.84%);
+    --spacing-xxsmall: 2px;
+    --spacing-xsmall: 4px;
+    --spacing-small: 8px;
+    --spacing-small-medium: 12px;
+    --spacing-medium: 16px;
+    --spacing-medium-large: 24px;
+    --spacing-large: 32px;
+    --spacing-xlarge: 40px;
+    --spacing-xxlarge: 48px;
+    --site-max-width-desktop: 1512px;
+    --site-width-container-max-width: min(100vw,1440px);
+    --dweb-header-height: 60px;
+    --dweb-store-header-height: 50px;
+    --mweb-header-height: 50px;
+    --mweb-bottom-tabs-height: 60px;
+    --border-radius: 4px;
+    --border-radius-large: 8px;
+    --modal-horz-spacing: 16px;
+    --border: 2px;
+    --map-elevated-items-box-shadow: 1px 2px 12px 2px rgba(0,0,0,.07);
+    --spacing-site-horz: 24px;
 }
 
 body {
-  height: 100%;
-  font-family: 'Cairo', sans-serif; /* Defaulting to Cairo for bilingual support or fallbacks */
-  background-color: var(--bg03);
-  padding-bottom: 6em;
-  overflow-x: hidden;
+    color: var(--color-noon-black);
+    -webkit-font-smoothing: antialiased;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    font-family: 'Cairo', sans-serif;
+    vertical-align: baseline;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 100%;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 0; /* Adjusted to 0 to let components handle padding */
+    padding-right: 0; 
+    max-width: min(100vw, 1800px);
+    background-color: var(--color-bg-tertiary); /* Using the noon-gray variable equivalent */
 }
 
-p {
-  max-width: 100%;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e0; 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0; 
 }
 
-a {
-  display: flex;
-  align-items: center;
-}
-
-/* .................................................. */
-
-/* ...Media Queries... */
-
-/* .................................................. */
-/* Small Screen  */
-@media screen and (max-width: 768px) {
-    html {
-      font-size: 12px;
+@layer components {
+    .btn-primary {
+        @apply bg-noon-yellow text-noon-black font-bold py-2 px-6 rounded-md hover:bg-yellow-400 transition-colors shadow-sm;
+    }
+    .input-field {
+        @apply w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-noon-yellow focus:border-transparent outline-none transition-all;
     }
 }
-/* .................................................. */
-/* Medium Screen  */
-@media (min-width: 769px) and (max-width: 992px) {
-    html {
-      font-size: 14px;
-    } 
-}
-/* .................................................. */
-/* Large Screen  */
-@media (min-width: 993px) {
-    html {
-      font-size: 16px;
-    }
-}
-
-
-

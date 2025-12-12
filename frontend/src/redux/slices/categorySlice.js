@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import API_URL from '../../utils/apiConfig';
 
 const initialState = {
   categories: [],
@@ -14,10 +15,53 @@ export const fetchCategories = createAsyncThunk(
   'category/fetchCategories',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/categories`);
+      const response = await fetch(`${API_URL}/categories`);
       const data = await response.json();
       if (!response.ok) return rejectWithValue(data.message);
       return data.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const createCategory = createAsyncThunk(
+  'category/createCategory',
+  async (categoryData, { rejectWithValue, getState }) => {
+    try {
+      const { token } = getState().authState;
+      const response = await fetch(`${API_URL}/categories`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(categoryData),
+      });
+      const data = await response.json();
+      if (!response.ok) return rejectWithValue(data.message);
+      return data.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const deleteCategory = createAsyncThunk(
+  'category/deleteCategory',
+  async (id, { rejectWithValue, getState }) => {
+    try {
+      const { token } = getState().authState;
+      const response = await fetch(`${API_URL}/categories/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.status === 204) return id;
+       const data = await response.json();
+      if (!response.ok) return rejectWithValue(data.message);
+      return id;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -61,6 +105,27 @@ export const categorySlice = createSlice({
         state.categories = action.payload;
       })
       .addCase(fetchCategories.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+        state.error = action.payload;
+      })
+      // Create Category
+      .addCase(createCategory.pending, (state) => { state.isLoading = true; })
+      .addCase(createCategory.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.categories.push(action.payload);
+      })
+      .addCase(createCategory.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      // Delete Category
+      .addCase(deleteCategory.pending, (state) => { state.isLoading = true; })
+      .addCase(deleteCategory.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.categories = state.categories.filter(c => c._id !== action.payload);
+      })
+      .addCase(deleteCategory.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       });

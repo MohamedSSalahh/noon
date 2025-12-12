@@ -1,7 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import API_URL from '../../utils/apiConfig';
 
 const initialState = {
   messages: [],
+  users: [],
   isLoading: false,
   error: null,
 };
@@ -11,7 +13,7 @@ export const fetchChatHistory = createAsyncThunk(
   async (userId, { rejectWithValue, getState }) => {
     try {
       const { token } = getState().authState;
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/chat/${userId}`, {
+      const response = await fetch(`${API_URL}/chat/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -20,6 +22,23 @@ export const fetchChatHistory = createAsyncThunk(
       if (!response.ok) {
         return rejectWithValue(data.message);
       }
+      return data.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchChatUsers = createAsyncThunk(
+  'chat/fetchChatUsers',
+  async (_, { rejectWithValue, getState }) => {
+    try {
+      const { token } = getState().authState;
+      const response = await fetch(`${API_URL}/chat/users/all`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json();
+      if (!response.ok) return rejectWithValue(data.message);
       return data.data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -50,6 +69,9 @@ const chatSlice = createSlice({
       .addCase(fetchChatHistory.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+      })
+      .addCase(fetchChatUsers.fulfilled, (state, action) => {
+        state.users = action.payload;
       });
   },
 });

@@ -1,5 +1,6 @@
 import { removeSubCategories, selectProduct, selectSubCategories, selectSubCategory } from "../redux/slices/categorySlice";
 import { fetchDeal } from "../redux/slices/collectionSlice";
+import API_URL from "../utils/apiConfig";
 
 const adaptProduct = (product) => ({
     ...product,
@@ -19,7 +20,8 @@ const adaptProduct = (product) => ({
 export async function getHotDealsProducts(dispatch, minSale) {
     try {
         // Fetching all products for now, ideally backend should support filtering by discount
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/products?limit=50`);
+        const response = await fetch(`${API_URL}/products?limit=50`);
+
         const data = await response.json();
         
         const products = data.data
@@ -38,7 +40,8 @@ export async function getHotDealsProducts(dispatch, minSale) {
 
 export async function getAllDealsProducts(dispatch, minSale) {
     try {
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/products?limit=100`);
+        const response = await fetch(`${API_URL}/products?limit=100`);
+
         const data = await response.json();
         
         // Grouping by category to mimic original behavior
@@ -46,19 +49,28 @@ export async function getAllDealsProducts(dispatch, minSale) {
         
         data.data.forEach(p => {
             const adapted = adaptProduct(p);
-            if (adapted.old_price) {
+            let include = false;
+
+            if (minSale === -1) {
+                include = true;
+            } else if (adapted.old_price) {
                 const sale = Math.floor(100 - (adapted.new_price / adapted.old_price) * 100);
                 if (sale > minSale) {
-                    const catTitle = adapted.category.title || 'Other';
-                    if (!productsByCategory[catTitle]) productsByCategory[catTitle] = [];
-                    productsByCategory[catTitle].push(adapted);
+                    include = true;
                 }
+            }
+
+            if (include) {
+                const catTitle = adapted.category.title || 'Other';
+                if (!productsByCategory[catTitle]) productsByCategory[catTitle] = [];
+                productsByCategory[catTitle].push(adapted);
             }
         });
 
         Object.keys(productsByCategory).forEach(title => {
              if (productsByCategory[title].length > 0) {
-                 dispatch(fetchDeal({ title: `${title} deals`, products: productsByCategory[title] }));
+                 const dealTitle = minSale === -1 ? title : `${title} deals`;
+                 dispatch(fetchDeal({ title: dealTitle, products: productsByCategory[title] }));
              }
         });
 
@@ -72,12 +84,14 @@ export async function getCategoryProducts(dispatch, categoryTitle) {
         dispatch(removeSubCategories());
         // First get category ID by title (inefficient but necessary without ID)
         // Ideally we should pass ID, but keeping signature same for now
-        const catResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/categories`);
+        const catResponse = await fetch(`${API_URL}/categories`);
+
         const catData = await catResponse.json();
         const category = catData.data.find(c => c.name === categoryTitle);
 
         if (category) {
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/products?category=${category._id}`);
+            const response = await fetch(`${API_URL}/products?category=${category._id}`);
+
             const data = await response.json();
             const products = data.data.map(adaptProduct);
             
@@ -100,7 +114,8 @@ export async function getCategoryProducts(dispatch, categoryTitle) {
 
 export async function getProduct(dispatch, subCategoryID, productID) {
     try {
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/products/${productID}`);
+        const response = await fetch(`${API_URL}/products/${productID}`);
+
         const data = await response.json();
         if (data.data) {
              dispatch(selectProduct(adaptProduct(data.data)));
@@ -113,19 +128,25 @@ export async function getProduct(dispatch, subCategoryID, productID) {
 
 export async function getSubCategory(dispatch, subCategoryID) {
     try {
-        // Assuming subCategoryID is passed correctly
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/products?subcategories=${subCategoryID}`);
-        const data = await response.json();
-        const products = data.data.map(adaptProduct);
-        
-        // We need the subcategory title. 
-        // If products are returned, we can take it from the first one
-        const title = products.length > 0 ? products[0].subCategory.title : 'Subcategory';
+        if (!subCategoryID || subCategoryID === 'undefined') return;
 
-        dispatch(selectSubCategory({
-            title: title,
-            products: products
-        }));
+        // Assuming subCategoryID is passed correctly
+        const response = await fetch(`${API_URL}/products?subcategories=${subCategoryID}`);
+
+        const data = await response.json();
+        
+        if (data.data) {
+             const products = data.data.map(adaptProduct);
+            
+            // We need the subcategory title. 
+            // If products are returned, we can take it from the first one
+            const title = products.length > 0 ? products[0].subCategory.title : 'Subcategory';
+
+            dispatch(selectSubCategory({
+                title: title,
+                products: products
+            }));
+        }
     } catch (error) {
         console.error("Failed to fetch subcategory:", error);
     }

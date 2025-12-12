@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import API_URL from '../../utils/apiConfig';
 
 const initialState = {
   wishlist: [],
@@ -11,7 +12,7 @@ export const fetchWishlist = createAsyncThunk(
   async (_, { rejectWithValue, getState }) => {
     try {
       const { token } = getState().authState;
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/wishlist`, {
+      const response = await fetch(`${API_URL}/wishlist`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
@@ -25,10 +26,10 @@ export const fetchWishlist = createAsyncThunk(
 
 export const addToWishlist = createAsyncThunk(
   'wishlist/addToWishlist',
-  async (productId, { rejectWithValue, getState }) => {
+  async ({ productId }, { rejectWithValue, getState }) => {
     try {
       const { token } = getState().authState;
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/wishlist`, {
+      const response = await fetch(`${API_URL}/wishlist`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,7 +51,7 @@ export const removeFromWishlist = createAsyncThunk(
   async (productId, { rejectWithValue, getState }) => {
     try {
       const { token } = getState().authState;
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/wishlist/${productId}`, {
+      const response = await fetch(`${API_URL}/wishlist/${productId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });

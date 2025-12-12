@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import styles from "./Product.module.css";
+
 import { Link, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,13 +8,14 @@ import Image from './Image';
 import { removeSelectedProduct } from '../../redux/slices/categorySlice';
 import { lazy } from 'react';
 import Spinner from '../Spinner/Spinner';
-import Footer from '../Footer/Footer';
+import ProductReviews from './ProductReviews';
+
 
 const Product = () => {
 
     const ProductsOverview = lazy(async () =>  {
         return new Promise(resolve => setTimeout(resolve, 2000)).then(
-          () => import("../Collection/ProductsOverview")
+          () => import("./ProductsOverview")
         );
     });
     
@@ -50,28 +51,38 @@ const Product = () => {
     }, [params, dispatch]);
 
     return (
-        <div className={styles.main_container}>
+        <div className="bg-noon-gray-100 min-h-screen pb-12">
             { product.id ?
-                <>
+                <div className="max-w-[1440px] mx-auto px-4 lg:px-8 pt-4">
                     <Suspense fallback={<Spinner />}>
-                        <div className={styles.nav_container}>
-                                    <Link to={`/${product.category.title}`}>{product.category.title}</Link>
-                                    <span><i className="fa-solid fa-chevron-right"></i></span>
-                                    <Link to="">{product.subCategory.title}</Link>
+                        <div className="flex items-center gap-2 text-xs text-noon-gray-500 mb-4">
+                                    <Link to={`/${product.category.title}`} className="hover:text-noon-blue capitalize">{product.category.title}</Link>
+                                    <span><i className="fa-solid fa-chevron-right text-[10px]"></i></span>
+                                    <Link to="" className="hover:text-noon-blue capitalize">{product.subCategory.title}</Link>
+                                    <span><i className="fa-solid fa-chevron-right text-[10px]"></i></span>
+                                    <span className="text-noon-black truncate max-w-[200px]">{product.title}</span>
                         </div>
-                        <div className={styles.flex_container}>
-                                <div className={styles.product_img_container}>
-                                    <Image imgSrc={product.image} imgAlt={product.title} />
+                        <div className="flex flex-col lg:flex-row gap-6 bg-white p-6 rounded-lg shadow-sm">
+                                <div className="w-full lg:w-1/3 flex justify-center items-start">
+                                    <div className="w-full max-w-[400px] aspect-square flex items-center justify-center">
+                                        <Image imgSrc={product.image} imgAlt={product.title} className="max-w-full max-h-full object-contain" />
+                                    </div>
                                 </div>
-                                <ProductData product={product} />
-                                <MoreData product={product} />
+                                <div className="w-full lg:w-1/3 border-r border-gray-100 pr-6">
+                                    <ProductData product={product} />
+                                </div>
+                                <div className="w-full lg:w-1/3">
+                                    <MoreData product={product} />
+                                </div>
                         </div>
                     </Suspense>
-                </> : ""}
+                </div> : ""}
             <Suspense fallback={''}>
-                <ProductsOverview data={{ ...subCategoryDeal, title: `${subCategory.title} deals` }}/>
-                <ProductsOverview data={{ ...subCategory, title: `More ${subCategory.title}` }}/>
-                <Footer />      
+                <div className="max-w-[1440px] mx-auto px-4 lg:px-8 mt-8 space-y-8">
+                    <ProductReviews productId={product._id} />
+                    <ProductsOverview data={{ ...subCategoryDeal, title: `${subCategory.title} deals` }}/>
+                    <ProductsOverview data={{ ...subCategory, title: `More ${subCategory.title}` }}/>
+                </div>
             </Suspense>
         </div>
     );

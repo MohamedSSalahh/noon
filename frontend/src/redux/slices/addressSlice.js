@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import API_URL from '../../utils/apiConfig';
 
 const initialState = {
   addresses: [],
@@ -11,7 +12,7 @@ export const fetchAddresses = createAsyncThunk(
   async (_, { rejectWithValue, getState }) => {
     try {
       const { token } = getState().authState;
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/addresses`, {
+      const response = await fetch(`${API_URL}/addresses`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
@@ -28,7 +29,7 @@ export const addAddress = createAsyncThunk(
   async (addressData, { rejectWithValue, getState }) => {
     try {
       const { token } = getState().authState;
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/addresses`, {
+      const response = await fetch(`${API_URL}/addresses`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,7 +51,7 @@ export const deleteAddress = createAsyncThunk(
   async (addressId, { rejectWithValue, getState }) => {
     try {
       const { token } = getState().authState;
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/addresses/${addressId}`, {
+      const response = await fetch(`${API_URL}/addresses/${addressId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });

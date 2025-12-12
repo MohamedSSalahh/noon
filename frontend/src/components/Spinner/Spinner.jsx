@@ -1,11 +1,11 @@
 import React from 'react';
-import styles from './Spinner.module.css'
+
 
 
 const Spinner = () => {
     return (
-        <div className={styles.container}>
-          <img className={styles.loader} src="/data/assets/gif/noon-loader.gif" alt="Loader" />
+        <div className="flex items-center justify-center w-full h-40">
+            <div className="w-12 h-12 border-4 border-noon-gray-200 border-t-noon-yellow rounded-full animate-spin"></div>
         </div>
     );
 }

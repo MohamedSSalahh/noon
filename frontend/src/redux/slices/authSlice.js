@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import API_URL from '../../utils/apiConfig';
 
 const initialState = {
     user: JSON.parse(localStorage.getItem('user')) || null,
@@ -11,7 +12,7 @@ export const signupUser = createAsyncThunk(
     'auth/signupUser',
     async (userData, { rejectWithValue }) => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/signup`, {
+            const response = await fetch(`${API_URL}/auth/signup`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -33,7 +34,7 @@ export const loginUser = createAsyncThunk(
     'auth/loginUser',
     async (userData, { rejectWithValue }) => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/login`, {
+            const response = await fetch(`${API_URL}/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

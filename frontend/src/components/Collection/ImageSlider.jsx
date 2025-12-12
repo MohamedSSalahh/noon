@@ -1,42 +1,49 @@
-import React, { useEffect, useRef, useState } from "react";
-import styles from "./ImageSlider.module.css";
-// Import Swiper React components
+import React, { useRef } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { useSwiper } from 'swiper/react';
-// Import Swiper styles
+import { Navigation, Autoplay, Pagination } from 'swiper';
 import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 const ImageSlider = ({ slider }) => {
+    const navigationPrevRef = useRef(null);
+    const navigationNextRef = useRef(null);
 
-    const swiper = useSwiper();
+    if (!slider) return null;
 
-    useEffect(() => {
-        console.log(swiper);
-    }, [swiper])
-
-    if (slider) return (
-        <div className={styles.main_container}>
+    return (
+        <div className="w-full relative group md:px-8 mt-4">
              <Swiper
-                spaceBetween={1000}
-                slidesPerView={slider.sliderImgs.length}
-                onSlideChange={() => console.log('slide change')}
-                onSwiper={(swiper) => console.log(swiper)}
-                >
-                { slider.sliderImgs.map(img => 
-                        <SwiperSlide key={img}><img src={img} alt="Banner" /></SwiperSlide>
-                    ) }
-                </Swiper>
+                modules={[Navigation, Autoplay, Pagination]}
+                spaceBetween={0}
+                slidesPerView={1}
+                autoplay={{ delay: 3000, disableOnInteraction: false }}
+                pagination={{ clickable: true }}
+                navigation={{
+                    prevEl: navigationPrevRef.current,
+                    nextEl: navigationNextRef.current,
+                }}
+                onBeforeInit={(swiper) => {
+                    swiper.params.navigation.prevEl = navigationPrevRef.current;
+                    swiper.params.navigation.nextEl = navigationNextRef.current;
+                }}
+                className="w-full h-[200px] md:h-[300px] lg:h-[400px]"
+            >
+                { slider.sliderImgs.map((img, index) => (
+                    <SwiperSlide key={index}>
+                        <img src={img} alt={`Banner ${index + 1}`} className="w-full h-full object-cover md:rounded-lg" />
+                    </SwiperSlide>
+                )) }
+            </Swiper>
             
-            { slider.sliderImgs.length > 1 ? <button onClick={() => swiper.slidePrev()}>
-                                <i className="fa-solid fa-chevron-left"></i>
-                            </button> : "" }
-                            
-            { slider.sliderImgs.length > 1 ? <button onClick={() => swiper.slideNext()}>
-                                <i className="fa-solid fa-chevron-right"></i>
-                            </button> : "" }
+            <button ref={navigationPrevRef} className="absolute top-1/2 left-4 z-10 -translate-y-1/2 w-12 h-12 bg-white shadow-card rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-105 text-noon-black">
+                <i className="fa-solid fa-chevron-left text-lg"></i>
+            </button>
+            <button ref={navigationNextRef} className="absolute top-1/2 right-4 z-10 -translate-y-1/2 w-12 h-12 bg-white shadow-card rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-105 text-noon-black">
+                <i className="fa-solid fa-chevron-right text-lg"></i>
+            </button>
         </div>
     );
 }
-            
 
 export default ImageSlider;
