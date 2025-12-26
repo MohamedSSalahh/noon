@@ -1,0 +1,36 @@
+<header class="bg-white shadow-sm sticky top-0 z-50">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Top">
+    <div class="w-full py-4 flex items-center justify-between border-b border-gray-200 lg:border-none">
+      <div class="flex items-center">
+        <a routerLink="/" class="text-2xl font-bold text-indigo-600 tracking-tighter hover:text-indigo-500 transition duration-300">
+          noon
+        </a>
+        <div class="hidden ml-10 space-x-8 lg:block">
+          <a routerLink="/" class="text-base font-medium text-gray-500 hover:text-gray-900 transition duration-150 ease-in-out">
+            Home
+          </a>
+          <a routerLink="/products" class="text-base font-medium text-gray-500 hover:text-gray-900 transition duration-150 ease-in-out">
+            Products
+          </a>
+        </div>
+      </div>
+      <div class="ml-10 space-x-4">
+        <a routerLink="/auth/login" class="inline-block bg-indigo-50 py-2 px-4 border border-transparent rounded-md text-base font-medium text-indigo-600 hover:bg-indigo-100 transition duration-300">
+          Sign in
+        </a>
+        <a routerLink="/auth/register" class="inline-block bg-indigo-600 py-2 px-4 border border-transparent rounded-md text-base font-medium text-white hover:bg-indigo-700 transition duration-300 shadow-md hover:shadow-lg">
+          Sign up
+        </a>
+      </div>
+    </div>
+    <!-- Mobile Menu Wrap -->
+    <div class="py-4 flex flex-wrap justify-center space-x-6 lg:hidden">
+      <a routerLink="/" class="text-base font-medium text-gray-500 hover:text-gray-900">
+        Home
+      </a>
+      <a routerLink="/products" class="text-base font-medium text-gray-500 hover:text-gray-900">
+        Products
+      </a>
+    </div>
+  </nav>
+</header>
