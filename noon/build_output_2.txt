@@ -1,0 +1,42 @@
+
+> noon@0.0.0 build
+> ng build --no-progress
+
+[1mInitial chunk files[22m  [2m | [22m[1mNames[22m              [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-5X5H5KAV.js[39m    [2m | [22m[2m-[22m                  [2m | [22m[36m143.40 kB[39m[2m | [22m               [36m42.66 kB[39m
+[32mchunk-SXBHGIXL.js[39m    [2m | [22m[2m-[22m                  [2m | [22m [36m91.31 kB[39m[2m | [22m               [36m23.08 kB[39m
+[32mstyles-D6MXWBZI.css[39m  [2m | [22m[2mstyles[22m             [2m | [22m [36m62.84 kB[39m[2m | [22m                [36m8.41 kB[39m
+[32mpolyfills-5CFQRCPP.js[39m[2m | [22m[2mpolyfills[22m          [2m | [22m [36m34.59 kB[39m[2m | [22m               [36m11.33 kB[39m
+[32mchunk-R4XXVRRE.js[39m    [2m | [22m[2m-[22m                  [2m | [22m [36m25.70 kB[39m[2m | [22m                [36m7.72 kB[39m
+[32mchunk-U7MGJSNW.js[39m    [2m | [22m[2m-[22m                  [2m | [22m [36m20.99 kB[39m[2m | [22m                [36m6.21 kB[39m
+[32mmain-MRVL6UI7.js[39m     [2m | [22m[2mmain[22m               [2m | [22m [36m18.08 kB[39m[2m | [22m                [36m4.44 kB[39m
+[32mchunk-HEBPIQ5B.js[39m    [2m | [22m[2m-[22m                  [2m | [22m[36m929 bytes[39m[2m | [22m              [36m929 bytes[39m
+
+[1m [22m                    [2m | [22m[1mInitial total[22m      [2m | [22m[1m397.85 kB[22m[2m | [22m              [1m104.77 kB[22m
+
+[1mLazy chunk files[22m     [2m | [22m[1mNames[22m              [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-DBBAWSNH.js[39m    [2m | [22m[2m-[22m                  [2m | [22m [36m40.21 kB[39m[2m | [22m                [36m8.50 kB[39m
+[32mchunk-FVPVYD3L.js[39m    [2m | [22m[2mproduct-form[22m       [2m | [22m [36m14.66 kB[39m[2m | [22m                [36m3.85 kB[39m
+[32mchunk-TTWM6K77.js[39m    [2m | [22m[2madmin-products[22m     [2m | [22m  [36m9.79 kB[39m[2m | [22m                [36m2.96 kB[39m
+[32mchunk-WTRT6F5S.js[39m    [2m | [22m[2mbrand-form[22m         [2m | [22m  [36m7.65 kB[39m[2m | [22m                [36m2.69 kB[39m
+[32mchunk-GYNGSFC6.js[39m    [2m | [22m[2mdashboard-home[22m     [2m | [22m  [36m7.50 kB[39m[2m | [22m                [36m2.46 kB[39m
+[32mchunk-AL5NCVHX.js[39m    [2m | [22m[2madmin-categories[22m   [2m | [22m  [36m7.49 kB[39m[2m | [22m                [36m2.32 kB[39m
+[32mchunk-FJKZ4OLQ.js[39m    [2m | [22m[2mcategory-form[22m      [2m | [22m  [36m7.22 kB[39m[2m | [22m                [36m2.55 kB[39m
+[32mchunk-HZPM25SO.js[39m    [2m | [22m[2madmin-brands[22m       [2m | [22m  [36m6.99 kB[39m[2m | [22m                [36m2.27 kB[39m
+[32mchunk-NV6GSSMQ.js[39m    [2m | [22m[2madmin-orders[22m       [2m | [22m  [36m6.82 kB[39m[2m | [22m                [36m2.08 kB[39m
+[32mchunk-BH2EYBKF.js[39m    [2m | [22m[2msubcategory-form[22m   [2m | [22m  [36m6.76 kB[39m[2m | [22m                [36m2.33 kB[39m
+[32mchunk-GG3W3GGE.js[39m    [2m | [22m[2mproduct-list[22m       [2m | [22m  [36m6.48 kB[39m[2m | [22m                [36m2.19 kB[39m
+[32mchunk-QIOW6CRL.js[39m    [2m | [22m[2madmin-reviews[22m      [2m | [22m  [36m6.33 kB[39m[2m | [22m                [36m2.14 kB[39m
+[32mchunk-JM5PCLZM.js[39m    [2m | [22m[2madmin-subcategories[22m[2m | [22m  [36m6.28 kB[39m[2m | [22m                [36m2.00 kB[39m
+[32mchunk-CX7GMKWW.js[39m    [2m | [22m[2madmin-users[22m        [2m | [22m  [36m5.83 kB[39m[2m | [22m                [36m1.97 kB[39m
+[32mchunk-77VVUGFN.js[39m    [2m | [22m[2mregister[22m           [2m | [22m  [36m5.49 kB[39m[2m | [22m                [36m1.56 kB[39m
+[2m...and 8 more lazy chunks files. Use "--verbose" to show all the files.[22m
+
+Application bundle generation complete. [3.376 seconds] - 2026-01-04T19:13:52.075Z
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1m1 rules skipped due to selector errors:
+  () -> Empty sub-selector[0m
+
+[39m[22m
+Output location: D:\work\noon\noon\noon\dist\noon
+

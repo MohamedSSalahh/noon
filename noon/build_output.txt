@@ -1,0 +1,20 @@
+
+> noon@0.0.0 build
+> ng build --no-progress
+
+Application bundle generation failed. [3.585 seconds] - 2026-01-04T19:11:14.933Z
+
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG2003: No suitable injection token for parameter 'adminService' of class 'AdminDashboardComponent'.
+  Consider using the @Inject decorator to specify an injection token.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin/pages/dashboard/dashboard.component.ts:54:22:
+[37m      54 │   constructor(private [32madminService[37m: import('../../../../core/servi...
+         ╵                       [32m~~~~~~~~~~~~[0m
+
+  This type is not supported as injection token.
+
+    src/app/features/admin/pages/dashboard/dashboard.component.ts:54:36:
+[37m      54 │ ...nService: [32mimport('../../../../core/services/admin.service').Adm[37m...
+         ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m
