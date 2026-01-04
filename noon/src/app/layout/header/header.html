@@ -2,8 +2,8 @@
   <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Top">
     <div class="w-full py-4 flex items-center justify-between border-b border-gray-200 lg:border-none">
       <div class="flex items-center">
-        <a routerLink="/" class="text-2xl font-bold text-indigo-600 tracking-tighter hover:text-indigo-500 transition duration-300">
-          noon
+        <a routerLink="/" class="text-2xl font-bold text-purple-600 tracking-tighter hover:text-yellow-500 transition duration-300">
+          jamal
         </a>
         <div class="hidden ml-10 space-x-8 lg:block">
           <a routerLink="/" class="text-base font-medium text-gray-500 hover:text-gray-900 transition duration-150 ease-in-out">
@@ -14,13 +14,25 @@
           </a>
         </div>
       </div>
-      <div class="ml-10 space-x-4">
-        <a routerLink="/auth/login" class="inline-block bg-indigo-50 py-2 px-4 border border-transparent rounded-md text-base font-medium text-indigo-600 hover:bg-indigo-100 transition duration-300">
-          Sign in
-        </a>
-        <a routerLink="/auth/register" class="inline-block bg-indigo-600 py-2 px-4 border border-transparent rounded-md text-base font-medium text-white hover:bg-indigo-700 transition duration-300 shadow-md hover:shadow-lg">
-          Sign up
-        </a>
+      <div class="ml-10 space-x-4 flex items-center">
+        @if (authService.currentUser()?.role === 'admin' || authService.currentUser()?.role === 'manager') {
+           <a routerLink="/admin/dashboard" class="text-base font-medium text-purple-600 hover:text-gray-900 transition duration-150 ease-in-out mr-4">
+            Admin
+          </a>
+        }
+
+        @if (!authService.currentUser()) {
+          <a routerLink="/auth/login" class="inline-block bg-indigo-50 py-2 px-4 border border-transparent rounded-md text-base font-medium text-indigo-600 hover:bg-indigo-100 transition duration-300">
+            Sign in
+          </a>
+          <a routerLink="/auth/register" class="inline-block bg-indigo-600 py-2 px-4 border border-transparent rounded-md text-base font-medium text-white hover:bg-indigo-700 transition duration-300 shadow-md hover:shadow-lg">
+            Sign up
+          </a>
+        } @else {
+           <button (click)="authService.logout()" class="text-base font-medium text-red-600 hover:text-red-500">
+             Logout
+           </button>
+        }
       </div>
     </div>
     <!-- Mobile Menu Wrap -->
