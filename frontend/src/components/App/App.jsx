@@ -36,6 +36,7 @@ import Wishlist from '../Wishlist/Wishlist';
 import Orders from '../User/Orders';
 import OrderSuccess from '../User/OrderSuccess';
 
+import VendorDashboard from '../Vendor/VendorDashboard';
 function App() {
   const { user } = useSelector((state) => state.authState);
 
@@ -52,11 +53,13 @@ function App() {
       if (!user) {
           return <Navigate to="/login" replace />;
       }
-      if (user.role !== 'admin') {
+      // Allow both admin and vendor to access the "portal" area
+      if (user.role !== 'admin' && user.role !== 'vendor') {
           return <Navigate to="/" replace />;
       }
       return children;
   };
+  
 
   return (
     <div className="App">
@@ -72,10 +75,18 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 
-                {/* Admin Routes */}
+                {/* Vendor Route */}
+                <Route path="/vendor/dashboard" element={
+                     <ProtectedAdminRoute>
+                        <VendorDashboard />
+                     </ProtectedAdminRoute>
+                } />
+
+                {/* Admin/Merchant Routes - Shared for now, verified by Backend Scoping */}
                 <Route path="/admin" element={
                     <ProtectedAdminRoute>
-                        <AdminDashboard />
+                        {/* If vendor, go to their dashboard, if admin, theirs */}
+                        {user?.role === 'vendor' ? <Navigate to="/vendor/dashboard" /> : <AdminDashboard />}
                     </ProtectedAdminRoute>
                 } />
                 <Route path="/admin/categories" element={
