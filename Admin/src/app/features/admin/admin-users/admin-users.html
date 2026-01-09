@@ -32,9 +32,17 @@
                 </div>
               </td>
               <td class="hidden md:table-cell px-8 py-5">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-50 text-gray-600 border border-gray-100">
-                  {{ user.role }}
-                </span>
+                <div class="relative">
+                    <select (change)="updateRole(user, $event)" [value]="user.role" [disabled]="user.role === 'superadmin'" 
+                        class="block w-full pl-3 pr-8 py-1.5 text-xs font-bold text-gray-700 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed">
+                        <option value="user">User</option>
+                        <option value="manager">Manager</option>
+                        <option value="admin">Admin</option>
+                        @if(user.role === 'superadmin') {
+                            <option value="superadmin">Super Admin</option>
+                        }
+                    </select>
+                </div>
               </td>
               <td class="px-4 md:px-8 py-5">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold w-fit"

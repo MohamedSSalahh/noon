@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchWishlist, removeFromWishlist } from '../../redux/slices/wishListSlice';
-
 import { Link } from 'react-router-dom';
+import { Box, Container, Grid, Typography, Paper, IconButton, CircularProgress, Alert, Button } from '@mui/material';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 const Wishlist = () => {
     const dispatch = useDispatch();
@@ -17,67 +19,113 @@ const Wishlist = () => {
     };
 
     if (isLoading) return (
-        <div className="min-h-screen flex items-center justify-center bg-noon-gray-100">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-noon-blue"></div>
-        </div>
+        <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
+            <CircularProgress color="primary" />
+        </Box>
     );
 
     if (error) return (
-        <div className="min-h-screen flex items-center justify-center bg-noon-gray-100">
-             <div className="bg-red-50 border-l-4 border-noon-red p-4">
-                <p className="text-noon-red">Error: {error}</p>
-            </div>
-        </div>
+        <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default', p: 2 }}>
+             <Alert severity="error" variant="filled">{error}</Alert>
+        </Box>
     );
 
     return (
-        <div className="bg-noon-gray-100 min-h-screen pb-12 pt-6">
-            <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
-                <h1 className="text-2xl font-bold font-heading text-noon-black mb-6">My Wishlist</h1>
+        <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 6 }}>
+            <Container maxWidth="xl" sx={{ px: { xs: 2, lg: 4 } }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, mb: 4, fontFamily: 'inherit' }}>My Wishlist</Typography>
                 
                 {wishlist.length === 0 ? (
-                    <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-                        <div className="w-24 h-24 bg-noon-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i className="far fa-heart text-4xl text-noon-gray-400"></i>
-                        </div>
-                        <h2 className="text-xl font-bold text-noon-black mb-2">Your wishlist is empty</h2>
-                        <p className="text-noon-gray-500 mb-6">Save items you love to buy later.</p>
-                        <Link to="/" className="inline-block bg-noon-blue text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors shadow-soft hover:shadow-hover">
+                    <Paper sx={{ p: 8, textAlign: 'center', borderRadius: 3, bgcolor: 'background.paper', boxShadow: 1 }}>
+                        <Box sx={{ 
+                            width: 100, 
+                            height: 100, 
+                            bgcolor: 'action.hover', 
+                            borderRadius: '50%', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            mx: 'auto', 
+                            mb: 3,
+                            color: 'text.secondary'
+                        }}>
+                             <FavoriteBorderIcon sx={{ fontSize: 48 }} />
+                        </Box>
+                        <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>Your wishlist is empty</Typography>
+                        <Typography color="text.secondary" sx={{ mb: 4 }}>Save items you love to buy later.</Typography>
+                        <Button 
+                            component={Link} 
+                            to="/" 
+                            variant="contained" 
+                            size="large"
+                            sx={{ px: 4, py: 1.5, fontSize: '1rem' }}
+                        >
                             Continue Shopping
-                        </Link>
-                    </div>
+                        </Button>
+                    </Paper>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <Grid container spacing={3}>
                         {wishlist.map((product) => (
-                            <div key={product._id} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col">
-                                <div className="relative pt-[100%] bg-white p-4">
-                                    <img src={product.imageCover} alt={product.title} className="absolute top-0 left-0 w-full h-full object-contain p-4" />
-                                    <button 
-                                        className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full shadow-sm flex items-center justify-center text-noon-gray-400 hover:text-noon-red transition-colors"
-                                        onClick={() => handleRemove(product._id)}
-                                        title="Remove from Wishlist"
-                                    >
-                                        <i className="fas fa-trash-alt text-sm"></i>
-                                    </button>
-                                </div>
-                                <div className="p-4 flex-grow flex flex-col">
-                                    <h3 className="text-sm font-medium text-noon-black line-clamp-2 mb-2 h-10">{product.title}</h3>
-                                    <div className="flex items-center justify-between mt-auto">
-                                        <p className="text-lg font-bold text-noon-black">{product.price} <span className="text-xs font-normal text-noon-gray-500">EGP</span></p>
-                                    </div>
-                                    <Link 
-                                        to={`/${product.category?.name || 'category'}/${product.category?._id || 'id'}/${product._id}`} 
-                                        className="mt-4 block w-full text-center border border-noon-blue text-noon-blue font-bold py-2 rounded-lg hover:bg-noon-blue hover:text-white transition-colors"
-                                    >
-                                        View Product
-                                    </Link>
-                                </div>
-                            </div>
+                            <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
+                                <Paper sx={{ borderRadius: 3, overflow: 'hidden', height: '100%', display: 'flex', flexDirection: 'column', boxShadow: 1, position: 'relative', '&:hover': { boxShadow: 4, transform: 'translateY(-4px)', transition: 'all 0.3s' } }}>
+                                     <Box sx={{ position: 'relative', pt: '100%', bgcolor: 'background.paper' }}>
+                                        <img 
+                                            src={product.imageCover} 
+                                            alt={product.title} 
+                                            style={{ 
+                                                position: 'absolute', 
+                                                top: 0, 
+                                                left: 0, 
+                                                width: '100%', 
+                                                height: '100%', 
+                                                objectFit: 'contain', 
+                                                padding: '16px' 
+                                            }} 
+                                        />
+                                        <IconButton 
+                                            sx={{ 
+                                                position: 'absolute', 
+                                                top: 8, 
+                                                right: 8, 
+                                                bgcolor: 'background.paper', 
+                                                boxShadow: 1,
+                                                '&:hover': { bgcolor: 'error.light', color: 'error.contrastText' }
+                                            }}
+                                            onClick={() => handleRemove(product._id)}
+                                            size="small"
+                                        >
+                                            <DeleteOutlineIcon fontSize="small" />
+                                        </IconButton>
+                                     </Box>
+                                     
+                                     <Box sx={{ p: 2, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                                         <Typography variant="body2" sx={{ fontWeight: 500, mb: 1, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', minHeight: 40 }}>
+                                             {product.title}
+                                         </Typography>
+                                         
+                                         <Box sx={{ mt: 'auto' }}>
+                                             <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+                                                 {product.price} <Typography component="span" variant="caption" color="text.secondary">EGP</Typography>
+                                             </Typography>
+                                             
+                                             <Button 
+                                                 component={Link}
+                                                 to={`/${product.category?.name || 'category'}/${product.category?._id || 'id'}/${product._id}`} 
+                                                 variant="outlined" 
+                                                 fullWidth
+                                                 sx={{ fontWeight: 700 }}
+                                             >
+                                                 View Product
+                                             </Button>
+                                         </Box>
+                                     </Box>
+                                </Paper>
+                            </Grid>
                         ))}
-                    </div>
+                    </Grid>
                 )}
-            </div>
-        </div>
+            </Container>
+        </Box>
     );
 };
 

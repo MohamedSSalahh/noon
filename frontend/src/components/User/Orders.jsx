@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import API_URL from '../../utils/apiConfig';
+import { Box, Container, Stack, Paper, Typography, Chip, Divider, CircularProgress, Button } from '@mui/material';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
 
 const Orders = () => {
     const [orders, setOrders] = useState([]);
@@ -26,57 +28,104 @@ const Orders = () => {
     }, [token]);
 
     if (loading) return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="w-10 h-10 border-4 border-noon-yellow border-t-transparent rounded-full animate-spin"></div>
-            </div>
+        <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
+            <CircularProgress color="primary" />
+        </Box>
     );
 
     return (
-        <div className="bg-gray-50 min-h-screen py-10 px-4">
-            <div className="max-w-7xl mx-auto">
-                <h1 className="text-2xl font-bold mb-6">My Orders</h1>
+        <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 6 }}>
+            <Container maxWidth="xl" sx={{ px: { xs: 2, lg: 4 } }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, mb: 4, fontFamily: 'inherit' }}>My Orders</Typography>
                 
                 {orders.length === 0 ? (
-                    <div className="text-center py-10 bg-white rounded-lg shadow-sm">
-                        <p className="text-gray-500 mb-4">You have no orders yet.</p>
-                        <Link to="/" className="text-noon-blue font-bold hover:underline">Start Shopping</Link>
-                    </div>
+                    <Paper sx={{ p: 8, textAlign: 'center', borderRadius: 3, bgcolor: 'background.paper', boxShadow: 1 }}>
+                        <Box sx={{ 
+                            width: 80, 
+                            height: 80, 
+                            bgcolor: 'action.hover', 
+                            borderRadius: '50%', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            mx: 'auto', 
+                            mb: 3,
+                            color: 'text.secondary'
+                        }}>
+                             <Inventory2Icon sx={{ fontSize: 40 }} />
+                        </Box>
+                        <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>You have no orders yet.</Typography>
+                        <Button 
+                            component={Link} 
+                            to="/" 
+                            variant="text" 
+                            color="primary"
+                            sx={{ fontWeight: 700 }}
+                        >
+                            Start Shopping
+                        </Button>
+                    </Paper>
                 ) : (
-                    <div className="space-y-4">
+                    <Stack spacing={3}>
                         {orders.map(order => (
-                            <div key={order._id} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                                <div className="flex justify-between items-center mb-4 border-b pb-2">
-                                    <div>
-                                        <p className="text-sm text-gray-500">Order ID: <span className="font-mono text-gray-700">#{order._id}</span></p>
-                                        <p className="text-xs text-gray-400">{new Date(order.createdAt).toLocaleDateString()}</p>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="font-bold text-lg">{order.totalOrderPrice} EGP</p>
-                                        <span className={`text-xs px-2 py-1 rounded-full ${order.isPaid ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                                            {order.isPaid ? 'Paid' : 'Pending Payment'}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
+                            <Paper key={order._id} sx={{ p: 3, borderRadius: 3, boxShadow: 1, border: 1, borderColor: 'divider' }}>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3, flexWrap: 'wrap', gap: 2 }}>
+                                    <Box>
+                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                                            Order ID: <Box component="span" sx={{ color: 'text.primary', fontFamily: 'monospace', fontWeight: 700 }}>#{order._id}</Box>
+                                        </Typography>
+                                        <Typography variant="caption" color="text.secondary">
+                                            Placed on {new Date(order.createdAt).toLocaleDateString()}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ textAlign: 'right' }}>
+                                        <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1, mb: 0.5 }}>
+                                            {order.totalOrderPrice} <Typography component="span" variant="caption" color="text.secondary">EGP</Typography>
+                                        </Typography>
+                                        <Chip 
+                                            label={order.isPaid ? 'Paid' : 'Pending Payment'} 
+                                            color={order.isPaid ? 'success' : 'warning'} 
+                                            size="small" 
+                                            sx={{ fontWeight: 600, borderRadius: 1, height: 24 }}
+                                        />
+                                    </Box>
+                                </Box>
+                                
+                                <Divider sx={{ mb: 2 }} />
+                                
+                                <Stack spacing={2}>
                                      {order.cartItems.map((item, idx) => (
-                                         <div key={idx} className="flex items-center gap-4">
-                                             <div className="w-12 h-12 bg-gray-100 rounded flex items-center justify-center">
-                                                 {/* Using placeholder or product image if available in order populated data */}
-                                                <i className="fas fa-box text-gray-400"></i>
-                                             </div>
-                                             <div>
-                                                 <p className="text-sm font-medium">{item.product?.title || "Product details unavailable"}</p>
-                                                 <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
-                                             </div>
-                                         </div>
+                                         <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                             <Box sx={{ 
+                                                 width: 50, 
+                                                 height: 50, 
+                                                 bgcolor: 'background.default', 
+                                                 borderRadius: 1, 
+                                                 display: 'flex', 
+                                                 alignItems: 'center', 
+                                                 justifyContent: 'center', 
+                                                 color: 'text.secondary',
+                                                 flexShrink: 0
+                                             }}>
+                                                <Inventory2Icon fontSize="small" />
+                                             </Box>
+                                             <Box>
+                                                 <Typography variant="subtitle2" sx={{ lineHeight: 1.2, mb: 0.5 }}>
+                                                     {item.product?.title || "Product details unavailable"}
+                                                 </Typography>
+                                                 <Typography variant="caption" color="text.secondary">
+                                                     Qty: {item.quantity}
+                                                 </Typography>
+                                             </Box>
+                                         </Box>
                                      ))}
-                                </div>
-                            </div>
+                                </Stack>
+                            </Paper>
                         ))}
-                    </div>
+                    </Stack>
                 )}
-            </div>
-        </div>
+            </Container>
+        </Box>
     );
 };
 

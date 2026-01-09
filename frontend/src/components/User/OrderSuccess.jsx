@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import API_URL from '../../utils/apiConfig';
+import { Box, Paper, Typography, CircularProgress, Button, Stack } from '@mui/material';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 const OrderSuccess = () => {
     const [searchParams] = useSearchParams();
@@ -51,31 +53,44 @@ const OrderSuccess = () => {
     }, [sessionId, token, navigate]);
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
-            <div className="text-center bg-white p-10 rounded-2xl shadow-lg border border-gray-100 max-w-md w-full">
+        <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default', px: 2 }}>
+            <Paper sx={{ textAlign: 'center', p: 5, borderRadius: 3, boxShadow: 3, maxWidth: 400, width: '100%' }}>
                 {processing ? (
                     <>
-                         <div className="w-16 h-16 border-4 border-noon-yellow border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-                         <h2 className="text-2xl font-bold text-gray-800 mb-2">Processing Payment...</h2>
-                         <p className="text-gray-500">Please wait while we confirm your order.</p>
+                         <CircularProgress size={60} thickness={4} sx={{ mb: 3 }} />
+                         <Typography variant="h5" sx={{ fontWeight: 700, mb: 1, color: 'text.primary' }}>Processing Payment...</Typography>
+                         <Typography color="text.secondary">Please wait while we confirm your order.</Typography>
                     </>
                 ) : (
                     <>
-                        <div className="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i className="fas fa-exclamation-triangle text-2xl"></i>
-                        </div>
-                        <h2 className="text-2xl font-bold text-gray-800 mb-2">Payment Verification Failed</h2>
-                        <p className="text-gray-500 mb-6">We couldn't confirm your payment. If you were charged, please contact support.</p>
-                        <button 
+                        <Box sx={{ 
+                            width: 64, 
+                            height: 64, 
+                            bgcolor: 'error.light', 
+                            color: 'error.main', 
+                            borderRadius: '50%', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            mx: 'auto', 
+                            mb: 3 
+                        }}>
+                            <WarningAmberIcon sx={{ fontSize: 32 }} />
+                        </Box>
+                        <Typography variant="h5" sx={{ fontWeight: 700, mb: 1, color: 'text.primary' }}>Payment Verification Failed</Typography>
+                        <Typography color="text.secondary" sx={{ mb: 3 }}>We couldn't confirm your payment. If you were charged, please contact support.</Typography>
+                        <Button 
+                            variant="contained" 
+                            color="primary"
                             onClick={() => navigate('/cart')}
-                            className="bg-gray-800 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                            sx={{ px: 4, py: 1.5, fontWeight: 600 }}
                         >
                             Return to Cart
-                        </button>
+                        </Button>
                     </>
                 )}
-            </div>
-        </div>
+            </Paper>
+        </Box>
     );
 };
 

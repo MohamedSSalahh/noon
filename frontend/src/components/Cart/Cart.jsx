@@ -4,6 +4,11 @@ import { fetchCart, removeFromCart } from '../../redux/slices/cartSlice';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import API_URL from '../../utils/apiConfig';
+import { Box, Container, Grid, Typography, Paper, Button, IconButton, Divider, Stack, CircularProgress, Alert } from '@mui/material';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
 
 const Cart = () => {
     const dispatch = useDispatch();
@@ -46,124 +51,167 @@ const Cart = () => {
     };
 
     if (isLoading) return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-            <div className="w-10 h-10 border-4 border-noon-yellow border-t-transparent rounded-full animate-spin"></div>
-        </div>
+        <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
+            <CircularProgress color="primary" />
+        </Box>
     );
 
     if (error) return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-             <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded shadow-sm">
-                <p className="text-red-700 font-medium">Error: {error}</p>
-            </div>
-        </div>
+        <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default', p: 2 }}>
+             <Alert severity="error" variant="filled">{error}</Alert>
+        </Box>
     );
 
     return (
-        <div className="bg-gray-50 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto">
-                <h1 className="text-3xl font-bold text-gray-900 mb-8 font-heading">Shopping Cart</h1>
+        <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 6 }}>
+            <Container maxWidth="xl" sx={{ px: { xs: 2, lg: 4 } }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, mb: 4, fontFamily: 'inherit' }}>Shopping Cart</Typography>
                 
                 {(!cartItems || cartItems.length === 0) ? (
-                    <div className="bg-white rounded-xl shadow-sm p-12 text-center border border-gray-100">
-                        <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-400">
-                             <i className="fas fa-shopping-bag text-4xl"></i>
-                        </div>
-                        <h2 className="text-xl font-bold text-gray-800 mb-2">Your cart is empty</h2>
-                        <p className="text-gray-500 mb-8 max-w-sm mx-auto">Looks like you haven't added anything to your cart yet. Browse our categories to find amazing deals!</p>
-                        <Link to="/" className="inline-block btn-primary">
+                    <Paper sx={{ p: 8, textAlign: 'center', borderRadius: 3, bgcolor: 'background.paper', boxShadow: 1 }}>
+                        <Box sx={{ 
+                            width: 100, 
+                            height: 100, 
+                            bgcolor: 'action.hover', 
+                            borderRadius: '50%', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            mx: 'auto', 
+                            mb: 3,
+                            color: 'text.secondary'
+                        }}>
+                             <ShoppingBagIcon sx={{ fontSize: 48 }} />
+                        </Box>
+                        <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>Your cart is empty</Typography>
+                        <Typography color="text.secondary" sx={{ mb: 4, maxWidth: 400, mx: 'auto' }}>
+                            Looks like you haven't added anything to your cart yet. Browse our categories to find amazing deals!
+                        </Typography>
+                        <Button 
+                            component={Link} 
+                            to="/" 
+                            variant="contained" 
+                            size="large"
+                            sx={{ px: 4, py: 1.5, fontSize: '1rem' }}
+                        >
                             Start Shopping
-                        </Link>
-                    </div>
+                        </Button>
+                    </Paper>
                 ) : (
-                    <div className="flex flex-col lg:flex-row gap-8">
+                    <Grid container spacing={4}>
                         {/* Cart Items List */}
-                        <div className="flex-grow space-y-4">
-                            {cartItems.map((item) => (
-                                <div key={item._id} className="bg-white p-6 rounded-xl shadow-sm flex gap-6 items-start border border-gray-100">
-                                    <div className="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 bg-white border border-gray-200 rounded-lg p-2 flex items-center justify-center">
-                                        <img 
-                                            src={item.product?.imageCover?.startsWith('http') ? item.product.imageCover : `${API_URL}/products/${item.product.imageCover}`}
-                                            alt={item.product?.title} 
-                                            className="max-w-full max-h-full object-contain"
-                                        />
-                                    </div>
-                                    <div className="flex-grow flex flex-col justify-between min-h-[128px]">
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 mb-1">{item.product?.title}</h3>
-                                            <p className="text-sm text-gray-500 mb-2">Color: <span className='text-gray-700 font-medium'>{item.color}</span></p>
-                                            <div className="flex items-center gap-2 mb-2">
-                                                <span className="text-xs text-gray-500">Sold by</span>
-                                                <span className="text-xs font-bold text-gray-700 bg-gray-100 px-2 py-0.5 rounded-full">{item.product?.brand?.name || 'Noon'}</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="flex items-center justify-between mt-4 border-t border-gray-50 pt-4">
-                                            <button 
-                                                className="text-sm text-gray-500 hover:text-red-500 flex items-center gap-1.5 transition-colors group"
-                                                onClick={() => handleRemove(item._id)}
-                                                title="Remove item"
-                                            >
-                                                <i className="far fa-trash-alt group-hover:scale-110 transition-transform"></i> 
-                                                <span>Remove</span>
-                                            </button>
+                        <Grid item xs={12} lg={8}>
+                            <Stack spacing={2}>
+                                {cartItems.map((item) => (
+                                    <Paper key={item._id} sx={{ p: 3, borderRadius: 3, display: 'flex', gap: 3, alignItems: 'flex-start', boxShadow: 1 }}>
+                                        <Box sx={{ 
+                                            width: { xs: 100, sm: 120 }, 
+                                            height: { xs: 100, sm: 120 }, 
+                                            flexShrink: 0, 
+                                            border: 1, 
+                                            borderColor: 'divider', 
+                                            borderRadius: 2, 
+                                            p: 1, 
+                                            display: 'flex', 
+                                            alignItems: 'center', 
+                                            justifyContent: 'center' 
+                                        }}>
+                                            <img 
+                                                src={item.product?.imageCover?.startsWith('http') ? item.product.imageCover : `${API_URL}/products/${item.product.imageCover}`}
+                                                alt={item.product?.title} 
+                                                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                                            />
+                                        </Box>
+                                        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', minHeight: { sm: 120 }, justifyContent: 'space-between' }}>
+                                            <Box>
+                                                <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '1.1rem', mb: 0.5, lineHeight: 1.3 }}>
+                                                    {item.product?.title}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                                                    Color: <Box component="span" sx={{ color: 'text.primary', fontWeight: 500 }}>{item.color}</Box>
+                                                </Typography>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                                    <Typography variant="caption" color="text.secondary">Sold by</Typography>
+                                                    <Typography variant="caption" sx={{ fontWeight: 700, bgcolor: 'action.hover', px: 1, py: 0.5, borderRadius: 1 }}>
+                                                        {item.product?.brand?.name || 'Noon'}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
                                             
-                                            <div className='text-right'>
-                                                 <p className="text-xs text-gray-400 mb-0.5">{item.quantity} x {item.price}</p>
-                                                 <p className="text-xl font-bold text-gray-900">{item.price * item.quantity} <span className="text-xs font-normal text-gray-500">EGP</span></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 2, borderTop: 1, borderColor: 'divider', pt: 2 }}>
+                                                <Button 
+                                                    startIcon={<DeleteOutlineIcon />}
+                                                    color="error"
+                                                    size="small"
+                                                    onClick={() => handleRemove(item._id)}
+                                                    sx={{ textTransform: 'none' }}
+                                                >
+                                                    Remove
+                                                </Button>
+                                                
+                                                <Box sx={{ textAlign: 'right' }}>
+                                                     <Typography variant="caption" color="text.secondary" display="block">
+                                                        {item.quantity} x {item.price}
+                                                     </Typography>
+                                                     <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                                                        {item.price * item.quantity} <Typography component="span" variant="caption" color="text.secondary">EGP</Typography>
+                                                     </Typography>
+                                                </Box>
+                                            </Box>
+                                        </Box>
+                                    </Paper>
+                                ))}
+                            </Stack>
+                        </Grid>
                         
                         {/* Order Summary */}
-                        <div className="w-full lg:w-96 flex-shrink-0">
-                            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 sticky top-24">
-                                <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
+                        <Grid item xs={12} lg={4}>
+                            <Paper sx={{ p: 3, borderRadius: 3, position: 'sticky', top: 100, boxShadow: 1 }}>
+                                <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>Order Summary</Typography>
                                 
-                                <div className="space-y-4 mb-6">
-                                    <div className="flex justify-between text-gray-600">
-                                        <span>Subtotal ({cartItems.length} items)</span>
-                                        <span className="font-medium">{totalCartPrice} EGP</span>
-                                    </div>
-                                    <div className="flex justify-between text-gray-600">
-                                        <span>Shipping</span>
-                                        <span className="text-green-600 font-medium">Free</span>
-                                    </div>
-                                </div>
+                                <Stack spacing={2} sx={{ mb: 3 }}>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', color: 'text.secondary' }}>
+                                        <Typography>Subtotal ({cartItems.length} items)</Typography>
+                                        <Typography fontWeight={500}>{totalCartPrice} EGP</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', color: 'text.secondary' }}>
+                                        <Typography>Shipping</Typography>
+                                        <Typography color="success.main" fontWeight={500}>Free</Typography>
+                                    </Box>
+                                </Stack>
                                 
-                                <div className="border-t border-gray-100 pt-4 mb-6">
-                                    <div className="flex justify-between items-end">
-                                        <span className="text-lg font-bold text-gray-900">Total</span>
-                                        <div className='text-right'>
-                                            <span className="text-2xl font-bold text-gray-900">{totalCartPrice}</span>
-                                            <span className="text-xs text-gray-500 ml-1">EGP</span>
-                                        </div>
-                                    </div>
-                                    <p className="text-xs text-gray-400 mt-2 text-right">Inclusive of VAT</p>
-                                </div>
+                                <Divider sx={{ mb: 3 }} />
                                 
-                                <button 
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mb: 3 }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 700 }}>Total</Typography>
+                                    <Box sx={{ textAlign: 'right' }}>
+                                        <Typography variant="h5" sx={{ fontWeight: 700, lineHeight: 1 }}>{totalCartPrice}</Typography>
+                                        <Typography variant="caption" color="text.secondary">EGP (Inclusive of VAT)</Typography>
+                                    </Box>
+                                </Box>
+                                
+                                <Button 
+                                    fullWidth 
+                                    variant="contained" 
+                                    size="large"
                                     onClick={handleCheckout}
-                                    className="w-full bg-noon-yellow text-noon-black font-bold py-3.5 rounded-lg hover:bg-yellow-400 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 mb-4"
+                                    endIcon={<ArrowForwardIcon />}
+                                    sx={{ py: 1.5, mb: 2, fontSize: '1rem', fontWeight: 700 }}
                                 >
-                                    <span>Checkout</span>
-                                    <i className="fas fa-arrow-right"></i>
-                                </button>
+                                    Checkout
+                                </Button>
                                 
-                                <div className="flex items-center justify-center gap-3 opacity-60">
-                                    <i className="fab fa-cc-visa text-2xl text-gray-600"></i>
-                                    <i className="fab fa-cc-mastercard text-2xl text-gray-600"></i>
-                                    <span className="text-xs text-gray-500 border-l border-gray-300 pl-3">Secure Checkout</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, opacity: 0.6 }}>
+                                    <CreditCardIcon />
+                                    <Divider orientation="vertical" flexItem />
+                                    <Typography variant="caption" color="text.secondary">Secure Checkout</Typography>
+                                </Box>
+                            </Paper>
+                        </Grid>
+                    </Grid>
                 )}
-            </div>
-        </div>
+            </Container>
+        </Box>
     );
 };
 

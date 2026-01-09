@@ -1,9 +1,28 @@
 <div class="space-y-8 animated-fade-in">
   <!-- Fresh Header -->
   <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-    <div>
-      <h2 class="text-3xl font-bold text-gray-900 tracking-tight">Overview</h2>
-      <p class="text-gray-500 mt-1 font-medium">Welcome back, Admin.</p>
+    <div class="flex items-center gap-4">
+      <div class="h-12 w-12 rounded-xl bg-white shadow-sm border border-slate-100 flex items-center justify-center">
+         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8">
+            <defs>
+              <linearGradient id="vDashIcon" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#7C3AED" />
+                <stop offset="100%" style="stop-color:#06B6D4" />
+              </linearGradient>
+            </defs>
+            <path d="M20 35C30 70 45 80 60 45C75 10 85 10 95 35" 
+                  stroke="url(#vDashIcon)" 
+                  stroke-width="14" 
+                  stroke-linecap="round" 
+                  fill="none" />
+         </svg>
+      </div>
+      <div>
+        <h2 class="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+            Overview
+        </h2>
+        <p class="text-gray-500 mt-1 font-medium">Welcome back, Admin.</p>
+      </div>
     </div>
     <div class="flex items-center gap-3">
         <span class="px-4 py-2 bg-white rounded-full text-xs font-bold text-gray-600 shadow-sm border border-gray-100 flex items-center gap-2">

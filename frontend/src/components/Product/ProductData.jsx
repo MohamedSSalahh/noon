@@ -1,6 +1,5 @@
 import React from 'react';
-import Select from '@mui/material/Select';
-import { MenuItem } from '@mui/material';
+import { Box, Typography, MenuItem, Select } from '@mui/material';
 import { useState } from 'react';
 import Image from './Image';
 import { useDispatch } from 'react-redux';
@@ -73,9 +72,13 @@ const ProductData = ({ product }) => {
     }
 
     return (
-        <div className="flex flex-col h-full">
-            <h4 className="text-sm text-noon-gray-500 font-bold mb-1 uppercase tracking-wide">{product.brand_name}</h4>
-            <h3 className="text-xl text-noon-black font-heading font-medium mb-2 leading-snug">{product.title}</h3>
+        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, mb: 0.5, textTransform: 'uppercase', letterSpacing: 1 }}>
+                {product.brand_name}
+            </Typography>
+            <Typography variant="h5" sx={{ color: 'text.primary', fontWeight: 500, mb: 1, lineHeight: 1.3 }}>
+                {product.title}
+            </Typography>
             <div className="flex items-center gap-4 mb-4">
                 <p className="text-xs text-noon-gray-500">Model: {product.model_number || 'N/A'}</p>
                 { product.rating ? (
@@ -129,7 +132,7 @@ const ProductData = ({ product }) => {
                     Add To Cart
                 </button>
             </div>
-        </div>
+        </Box>
     );
 }
 

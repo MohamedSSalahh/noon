@@ -15,7 +15,7 @@
         </div>
       </div>
       <div class="ml-10 space-x-4 flex items-center">
-        @if (authService.currentUser()?.role === 'admin' || authService.currentUser()?.role === 'manager') {
+        @if (authService.currentUser()?.role === 'admin' || authService.currentUser()?.role === 'manager' || authService.currentUser()?.role === 'superadmin') {
            <a routerLink="/admin/dashboard" class="text-base font-medium text-purple-600 hover:text-gray-900 transition duration-150 ease-in-out mr-4">
             Admin
           </a>
@@ -29,6 +29,9 @@
             Sign up
           </a>
         } @else {
+          <a routerLink="/admin" class="inline-block bg-indigo-50 py-2 px-4 border border-transparent rounded-md text-base font-medium text-indigo-600 hover:bg-indigo-100 transition duration-300">
+            Admin
+          </a>
            <button (click)="authService.logout()" class="text-base font-medium text-red-600 hover:text-red-500">
              Logout
            </button>

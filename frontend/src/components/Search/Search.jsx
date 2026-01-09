@@ -4,6 +4,9 @@ import { useSearchParams } from 'react-router-dom';
 import { fetchProducts } from '../../redux/slices/productSlice';
 import { Link } from 'react-router-dom';
 import Image from '../Product/Image';
+import { Box, Container, Grid, Typography, Paper, Chip, Stack, CircularProgress, Alert } from '@mui/material';
+import SearchOffIcon from '@mui/icons-material/SearchOff';
+import StarIcon from '@mui/icons-material/Star';
 
 const Search = () => {
     const [searchParams] = useSearchParams();
@@ -19,59 +22,120 @@ const Search = () => {
 
     const renderProductRating = (product) => {
         return (
-            <div className="flex items-center gap-1 bg-noon-green text-white text-[10px] px-1.5 py-0.5 rounded-full">
-                <span>{product.ratingsAverage || 4.5}</span>
-                <i className="fa-solid fa-star text-[8px]"></i>
-                <span className="text-white/80 ml-1">({product.ratingsQuantity || 10})</span>
-            </div>
+            <Chip 
+                icon={<StarIcon sx={{ fontSize: '12px !important', color: 'common.white' }} />} 
+                label={
+                    <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        {product.ratingsAverage || 4.5}
+                        <Typography component="span" variant="caption" sx={{ opacity: 0.8 }}>({product.ratingsQuantity || 10})</Typography>
+                    </Box>
+                }
+                size="small"
+                sx={{ 
+                    bgcolor: 'success.main', 
+                    color: 'common.white', 
+                    height: 20, 
+                    fontSize: '0.75rem', 
+                    '& .MuiChip-label': { px: 1 } 
+                }}
+            />
         );
     }
 
     if (isLoading) return (
-        <div className="min-h-screen flex items-center justify-center bg-noon-gray-100">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-noon-blue"></div>
-        </div>
+        <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
+            <CircularProgress color="primary" />
+        </Box>
     );
 
     return (
-        <div className="bg-noon-gray-100 min-h-screen pb-12 pt-6">
-            <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
-                <h1 className="text-xl font-bold text-noon-black mb-6">
-                    Search results for <span className="text-noon-blue">"{keyword}"</span>
-                </h1>
+        <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 6 }}>
+            <Container maxWidth="xl" sx={{ px: { xs: 2, lg: 4 } }}>
+                <Typography variant="h5" sx={{ fontWeight: 700, mb: 4, color: 'text.primary' }}>
+                    Search results for <Typography component="span" variant="h5" color="primary" fontWeight={700}>"{keyword}"</Typography>
+                </Typography>
 
                 {products.length === 0 ? (
-                    <div className="bg-white rounded-lg p-12 text-center shadow-sm">
-                        <img src="/data/assets/svg/empty_state.svg" alt="No results" className="mx-auto h-48 mb-6 opacity-50" />
-                        <h2 className="text-lg font-bold text-gray-800 mb-2">No products found</h2>
-                        <p className="text-gray-500">We couldn't find any products matching your search.</p>
-                    </div>
+                    <Paper sx={{ p: 8, textAlign: 'center', borderRadius: 3, bgcolor: 'background.paper', boxShadow: 1 }}>
+                        <Box sx={{ 
+                            width: 100, 
+                            height: 100, 
+                            bgcolor: 'action.selected', 
+                            borderRadius: '50%', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            mx: 'auto', 
+                            mb: 3,
+                            color: 'text.disabled'
+                        }}>
+                             <SearchOffIcon sx={{ fontSize: 48 }} />
+                        </Box>
+                        <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>No products found</Typography>
+                        <Typography color="text.secondary">We couldn't find any products matching your search.</Typography>
+                    </Paper>
                 ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    <Grid container spacing={2}>
                          {products.map((product) => (
-                            <Link to={`/${product.category?.name}/${product.subcategories?.[0]?._id}/${product._id}`} key={product._id} className="block">
-                                <div className="bg-white rounded-lg p-3 cursor-pointer hover:shadow-hover transition-shadow duration-300 border border-transparent hover:border-noon-gray-200 h-full flex flex-col">
-                                    <div className="w-full aspect-[4/5] mb-3 relative flex items-center justify-center">
+                            <Grid item xs={6} md={3} lg={2.4} key={product._id}>
+                                <Paper 
+                                    component={Link} 
+                                    to={`/${product.category?.name}/${product.subcategories?.[0]?._id}/${product._id}`} 
+                                    sx={{ 
+                                        display: 'block', 
+                                        textDecoration: 'none', 
+                                        height: '100%', 
+                                        p: 2, 
+                                        borderRadius: 2, 
+                                        boxShadow: 1, 
+                                        transition: 'all 0.3s', 
+                                        '&:hover': { boxShadow: 4, transform: 'translateY(-4px)' },
+                                        display: 'flex',
+                                        flexDirection: 'column'
+                                    }}
+                                >
+                                    <Box sx={{ 
+                                        width: '100%', 
+                                        aspectRatio: '4/5', 
+                                        mb: 2, 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'center',
+                                        position: 'relative' 
+                                    }}>
                                         <Image imgSrc={product.imageCover} imgAlt={product.title} className="max-h-full max-w-full object-contain" />
-                                    </div>
-                                    <p className="text-sm text-noon-black line-clamp-2 mb-2 flex-grow" title={product.title}>{product.title}</p>
-                                    <div className="mt-auto">
-                                        <div className="flex items-baseline gap-1">
-                                            <span className="text-xs text-noon-gray-500">EGP</span>
-                                            <span className="text-lg font-bold text-noon-black">{product.price.toFixed(2)}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between mt-3">
-                                            <img src="/data/assets/svg/fulfilment_express_v2-en.svg" alt="express" className="h-4" />
+                                    </Box>
+                                    
+                                    <Typography variant="body2" color="text.primary" sx={{ 
+                                        fontWeight: 500, 
+                                        mb: 1, 
+                                        overflow: 'hidden', 
+                                        textOverflow: 'ellipsis', 
+                                        display: '-webkit-box', 
+                                        WebkitLineClamp: 2, 
+                                        WebkitBoxOrient: 'vertical',
+                                        flexGrow: 1
+                                    }} title={product.title}>
+                                        {product.title}
+                                    </Typography>
+                                    
+                                    <Box sx={{ mt: 'auto' }}>
+                                        <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1, mb: 1.5 }}>
+                                            {product.price.toFixed(2)} <Typography component="span" variant="caption" color="text.secondary">EGP</Typography>
+                                        </Typography>
+                                        
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <img src="/data/assets/svg/fulfilment_express_v2-en.svg" alt="express" style={{ height: 16 }} />
                                             { renderProductRating(product) }
-                                        </div>
-                                    </div>
-                                </div>
-                            </Link>
+                                        </Box>
+                                    </Box>
+                                </Paper>
+                            </Grid>
                          ))}
-                    </div>
+                    </Grid>
                 )}
-            </div>
-        </div>
+            </Container>
+        </Box>
     );
 };
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box } from '@mui/material';
 import Image from './Image';
 
 const MoreData = ({ product }) => {
@@ -85,14 +86,14 @@ const MoreData = ({ product }) => {
     }
 
     return (
-        <div className="bg-white rounded-lg">
+        <Box sx={{ height: '100%' }}>
             { renderHassleFree() }
             { renderSellerInfo() }
             { renderSellerAchievements() }
-            <div className="border-t border-gray-100 pt-4 mt-4">
+            <Box sx={{ borderTop: 1, borderColor: 'divider', pt: 2, mt: 2 }}>
                 { renderFasilities() }
-            </div>
-        </div>
+            </Box>
+        </Box>
     );
 }
 

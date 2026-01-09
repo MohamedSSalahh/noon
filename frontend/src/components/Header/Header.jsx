@@ -19,9 +19,9 @@ const Header = () => {
   return (
     <AppBar position="sticky" sx={{ bgcolor: 'primary.main', boxShadow: 'none' }}>
       <Toolbar sx={{ 
-          maxWidth: '1440px', 
           width: '100%', 
-          mx: 'auto', 
+          maxWidth: '1440px',
+          mx: 'auto',
           px: { xs: 2, lg: 4 }, 
           gap: { xs: 2, lg: 4 },
           minHeight: { xs: '64px', lg: '70px' }

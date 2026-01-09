@@ -1,4 +1,5 @@
 import React, { lazy, Suspense } from 'react';
+import { Box, Container, Stack } from '@mui/material';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -36,17 +37,16 @@ const Category = () => {
     }, [params, dispatch]);
 
     return (
-        <div className="bg-noon-gray-100 min-h-screen pb-12">
+        <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', pb: 6 }}>
             <Suspense fallback={<Spinner />}>
-                <div className="max-w-[1440px] mx-auto">
+                <Container maxWidth="xl" sx={{ px: { xs: 2, lg: 4 } }}>
                     <ImageSlider slider={slider} />    
-                    <div className="px-4 lg:px-8 space-y-6">
+                    <Stack spacing={3} sx={{ mt: 3 }}>
                         {renderProductsOverviews()} 
-                    </div>
-                </div>
+                    </Stack>
+                </Container>
             </Suspense>
-
-        </div>
+        </Box>
     );
 }
 

@@ -37,7 +37,7 @@ const Footer = () => {
 
     return (
         <Box component="footer" sx={{ bgcolor: 'background.paper', pt: 6, pb: 3, mt: 'auto', borderTop: '1px solid', borderColor: 'divider' }}>
-            <Container maxWidth="xl">
+            <Container maxWidth="xl" sx={{ px: { xs: 2, lg: 4 } }}>
                 <Grid container spacing={4} sx={{ mb: 6 }}>
                     <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}>
                         <FooterSection 

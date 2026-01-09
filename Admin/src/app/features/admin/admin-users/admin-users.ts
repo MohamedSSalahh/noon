@@ -24,4 +24,25 @@ export class AdminUsers implements OnInit {
       });
     }
   }
+
+  updateRole(user: any, event: any) {
+    const newRole = event.target.value;
+    if (confirm(`Change role of ${user.name} to ${newRole}?`)) {
+      this.userService.updateUser(user._id, { role: newRole }).subscribe({
+        next: () => {
+          // Optimistic update or refresh
+          this.userService.getAllUsers();
+          // alert('Role updated successfully');
+        },
+        error: (err) => {
+          console.error('Error updating role', err);
+          alert(err.error?.message || 'Error updating role');
+          this.userService.getAllUsers(); // Revert on error
+        }
+      });
+    } else {
+        // Revert selection if cancelled
+        event.target.value = user.role;
+    }
+  }
 }

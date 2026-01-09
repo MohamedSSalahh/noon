@@ -155,7 +155,6 @@ body {
     margin-right: auto;
     padding-left: 0; /* Adjusted to 0 to let components handle padding */
     padding-right: 0; 
-    max-width: min(100vw, 1800px);
     background-color: var(--color-bg-tertiary); /* Using the noon-gray variable equivalent */
 }
 

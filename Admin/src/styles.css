@@ -11,6 +11,27 @@
   --color-dark-900: #1a1c1e;
 }
 
+:root {
+  /* Brand Colors */
+  --primary-gradient: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+  --primary-solid: #7C3AED;
+  --secondary: #06B6D4;
+
+  /* Backgrounds */
+  --bg-main: #F8FAFC;    /* bg-slate-50 */
+  --bg-card: #ffffff;    /* White */
+  --bg-sidebar: #1E293B; /* Dark Slate (if dark mode) or White for Light mode */
+
+  /* Text Colors */
+  --text-main: #1E293B;  /* text-slate-900 */
+  --text-muted: #64748b; /* text-slate-500 */
+
+  /* UI Elements */
+  --border-color: #e2e8f0;
+  --success: #10b981;
+  --warning: #f59e0b;
+}
+
 body {
     font-family: var(--font-sans);
     @apply bg-gray-50 text-gray-900 antialiased selection:bg-purple-200 selection:text-purple-900;
